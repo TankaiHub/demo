@@ -1,0 +1,57 @@
+*{
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+.wrapper{
+    margin:100px auto;
+    position: relative;
+    width:500px;
+    border:1px solid #000;
+}
+.wrapper .showImg{
+    width:500px;
+    height:500px;
+    border-bottom:1px solid #000;
+}
+.wrapper .showImg .magImg{
+    width:500px;
+    height:500px;
+}
+.wrapper .showImg .magImg img{
+    width:100%;
+    height:100%;
+}
+.wrapper .bgView{
+    position:absolute;
+    top:0;
+    left:105%;
+    width:500px;
+    height:500px;
+    border:1px solid #000;
+    overflow: hidden;
+    display: none;
+}
+.wrapper .moveView{
+    position: absolute;
+    background-color:rgba(0, 0, 0, 0.3);
+    display: none;
+}
+.wrapper .imgList{
+    width:500px;
+    height:100px;
+}
+.wrapper .imgList ul{
+
+}
+.wrapper .imgList ul li {
+    float: left;
+    width:125px;
+    height:100px;
+    padding:5px 10px;
+    box-sizing:border-box;
+}
+.wrapper .imgList ul li img{
+    width:100%;
+    height:100%;
+}

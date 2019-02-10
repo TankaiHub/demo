@@ -1,0 +1,276 @@
+<!doctype <!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .wrapper {
+            position: relative;
+            left: 0;
+            top: 0;
+        }
+
+        .btn {
+            height: 50px;
+            width: 170px;
+            line-height: 50px;
+            text-align: center;
+            position: absolute;
+            left: 50px;
+            border-radius: 30px;
+            background-color: aqua;
+            cursor: pointer;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .box {
+            width: 500px;
+            height: 500px;
+            margin: 60px auto;
+            border-top: 1px solid #b25f27;
+            border-left: 1px solid #b25f27;
+            box-shadow: 5px 5px 5xp rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .flagBox {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            width: 200px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            color: #333;
+            margin-left: -100px;
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .block {
+            width: 49px;
+            height: 49px;
+            /* border-radius:10px; */
+            border-right: 1px solid #b25f27;
+            border-bottom: 1px solid #b25f27;
+            box-shadow: 0 0 4xp #333 inset;
+            background-color: green;
+            float: left;
+        }
+
+        .show {
+            background-color: rgb(49, 125, 148);
+        }
+
+        .num {
+            background-color: #ecd0a1;
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 49px;
+            text-align: center;
+        }
+
+        .flag {
+            background: #474747;
+        }
+        .alert{
+            display: none;
+            position: absolute;
+            top:50%;
+            left:50%;
+            margin-left: -100px;
+            margin-top: -100px;
+            width:200px;
+            height:200px;
+            line-height: 200px;
+            text-align: center;
+            font-size:30px;
+            font-weight: bolder;
+            background:#ccc;
+        }
+        .alert span{
+            position: absolute;
+            top:0;
+            right:0;
+            width:50px;
+            height:50px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+        .alert span::after{
+            content: "X";
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform: translateX(-50%) translateY(-50%);
+            font-size:20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="btn">
+            <span>开始游戏</span>
+        </div>
+        <div class="box"></div>
+        <div class="flagBox">
+            当前剩余雷数:
+            <span id="score">10</span>
+        </div>
+        <div class='alert'>Game Over<span></span></div>
+    </div>
+
+    <script>
+        //1.点击开始游戏 --->动态生成100个小格  ---->100个div
+        //leftClick 没有雷--->显示数字   扩散--->当前周围8个格没有雷   有雷---:game over
+        //rightClick 没有标记--->添加标记  有标记--->取消标记  标记成功--->10 --
+        var btn = document.getElementsByClassName('btn')[0];
+        var box = document.getElementsByClassName('box')[0];
+        var flagBox = document.getElementsByClassName('flagBox')[0];
+        var score = document.getElementById('score');
+        var alertBox = document.getElementsByClassName('alert')[0];
+        var span = alertBox.getElementsByTagName('span')[0];
+        var minesNum;
+        var minesOver;
+        var block;
+        var minesMap = [{ main: 0 }];
+        var key = true;
+        binEvent();
+        function binEvent() {
+            btn.onclick = function () {
+                    box.style.display = 'block';
+                    flagBox.style.display = 'block';
+                    btn.style.display = 'none';
+                    init();
+            }
+            span.onclick = function () {
+                alertBox.style.display = 'none';
+                box.style.display = 'none';
+                flagBox.style.display = 'none';
+                btn.style.display = 'block';
+                init();
+            }
+            box.oncontextmenu = function () {
+                return false;
+            }
+            box.onmousedown = function (e) {
+                var event = e.target;
+                if (e.which == 1) {
+                    if(key) {
+                        key = false;
+                        leftClick(event);
+                    }
+                } else if (e.which == 3) {
+                    rightClick(event);
+                }
+            }
+        }
+
+        function init() {
+            key = true;
+            box.innerHTML = '';
+            minesNum = 10;
+            minesOver = 10;
+            score.innerHTML = minesOver;
+            for (var i = 0; i < 10; i++) {
+                for (var j = 0; j < 10; j++) {
+                    var con = document.createElement('div');
+                    con.classList.add('block');
+                    con.setAttribute('id', i + '-' + j);
+                    box.appendChild(con);
+                    minesMap.push({ mine: 0 });
+                    // console.log(minesMap)
+                }
+            }
+            block = document.getElementsByClassName('block');
+            while (minesNum) {
+                var minesIndex = Math.floor(Math.random() * 100);
+                if (minesMap[minesIndex].mine === 0) {
+                    minesMap[minesIndex].mine = 1;
+                    block[minesIndex].classList.add('isLei');
+                    minesNum--;
+                }
+
+            }
+        }
+
+        function leftClick(dom) {
+            if (dom.classList.contains('flag')) {
+                return;
+            }
+            if (minesOver == 0) {
+                return;
+            }
+            var isLei = document.getElementsByClassName('isLei');
+            if (dom && dom.classList.contains('isLei')) {
+                for (var i = 0; i < isLei.length; i++) {
+                    isLei[i].classList.add('show');
+                }
+                setTimeout(function () {
+                    alertBox.style.display = 'block';
+                }, 400);
+            } else {
+                key = true;
+                var n = 0;
+                var posArr = dom && dom.getAttribute('id').split('-');
+                var posX = posArr && +posArr[0];
+                var posY = posArr && +posArr[1];
+                dom && dom.classList.add('num')	;
+                for (var i = posX - 1; i <= posX + 1; i++) {
+                    for (var j = posY - 1; j <= posY + 1; j++) {
+                        var aroundBox = document.getElementById(i + "-" + j);
+                        // console.log(aroundBox)
+                        if (aroundBox && aroundBox.classList.contains('isLei')) {
+                            n++;
+                            // console.log(n);
+
+                        }
+                    }
+                }
+                dom && (dom.innerHTML = n);
+                if (n == 0) {
+                    for (var i = posX - 1; i <= posX + 1; i++) {
+                        for (var j = posY - 1; j <= posY + 1; j++) {
+                            var nearBox = document.getElementById(i + '-' + j);
+                            if (nearBox && nearBox.length != 0) {
+                                if (!nearBox.classList.contains('check')) {
+                                    nearBox.classList.add('check');
+                                    leftClick(nearBox);
+                                    // console.log(nearBox);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function rightClick(dom) {
+            if (dom && dom.classList.contains('num')) {
+                return false;
+            }
+            dom.classList.toggle('flag');
+            if (dom.classList.contains('isLei') && dom.classList.contains('flag')) {
+                minesOver--;
+            }
+            if (dom.classList.contains('isLei') && !dom.classList.contains('flag')) {
+                minesOver++;
+            }
+            score.innerHTML = minesOver;
+            if (minesOver == 0) {
+                // console.log('over');
+                alert('over');
+                return;
+            }
+        }
+    </script>
+</body>
+
+</html>

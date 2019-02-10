@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .snowBox {
+            overflow: hidden;
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: 10px auto;
+            background-color: #000;
+        }
+
+        .snow {
+            position: absolute;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="snowBox"></div>
+    <script src="jquery-3.3.1.js"></script>
+    <script>
+        var sB = $('.snowBox');
+        var snow = $('<div class="snow">*</div>');
+        var i = 0;
+        var sL;
+        setInterval(function () {
+            i ++;
+            var sBW = parseInt(sB.css('width'));
+            var fontSize = Math.floor(Math.random() * 50);
+            var sWidth = Math.floor(Math.random() * sBW);
+            i / 2 == 0 ? sL = sWidth / 2 : sL = sWidth * 2;
+            var sBH = parseInt($('.snowBox').css('height')) - 40;
+            snow.clone().appendTo(sB)
+                            .css({left: sWidth + 'px', fontSize: fontSize + 'px'})
+                                .animate({ 'top': sBH + 'px', 'left': sL + 'px', 'opacity': 0.5 }, 3000, function () {
+                                    $(this).remove();
+                                });
+        }, 10);
+    </script>
+</body>
+
+</html>
